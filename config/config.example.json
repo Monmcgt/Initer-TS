@@ -1,5 +1,6 @@
 {
-  "startup": [
-    "/opt/discord/Discord"
-  ]
+  "startup": {
+    "binary": ["arg1, arg2, arg3"],
+    "/opt/discord/Discord": []
+  }
 }

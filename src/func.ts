@@ -7,8 +7,20 @@ function is_string(value: any): boolean {
     return typeof value === "string";
 }
 
-function run_command(command: string): void {
-    child_process.spawn(command, [], {stdio: "pipe"});
+function is_string_array(value: any): boolean {
+    if (!Array.isArray(value)) {
+        return false;
+    }
+    for (const element of value) {
+        if (!is_string(element)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function run_command(command: string, args: Array<string>): void {
+    child_process.spawn(command, args, {stdio: "pipe"});
     LOGGER.out("success: " + command);
 }
 
@@ -30,4 +42,4 @@ function sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export { is_string, run_command, init_file, sleep };
+export { is_string, is_string_array, run_command, init_file, sleep };

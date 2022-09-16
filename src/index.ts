@@ -1,8 +1,8 @@
 const v = require("./var");
 const func = require("./func");
-const config_file = require("../config/config.json");
+const config_file = require("../config/config.json").startup;
 
-const array: string[] = [];
+const map: Map<string, Array<string>> = new Map<string, Array<string>>();
 let index: number = 0;
 
 func.init_file(v.LOG_FILE);
@@ -10,17 +10,26 @@ func.init_file(v.LOG_ERR_FILE);
 
 v.LOGGER.init(v.LOG_FILE, v.LOG_ERR_FILE);
 
-for (const value of config_file.startup) {
-    if (!func.is_string(value)) {
-        // throw new Error("value is not a string");
-        v.LOGGER.err("value is not a string at index " + index);
-    } else {
-        array.push(value);
+for (const key in config_file) {
+    if (!func.is_string(key)) {
+        v.LOGGER.err("key is not a string at index " + index);
+        continue;
     }
+
+    const value: any = config_file[key];
+    if (!func.is_string_array(value)) {
+        v.LOGGER.err("value is not a string array at index " + index);
+        continue;
+    }
+
+    map.set(key, value);
     index++;
 }
 
-array.forEach(func.run_command);
+for (const key of map.keys()) {
+    const value: Array<string> = map.get(key) as Array<string>;
+    func.run_command(key, value);
+}
 
 v.LOGGER.close();
 
